@@ -10,10 +10,10 @@ import (
 )
 
 type productController struct{
-	productUseCase usecase.ProductUsecase
+	productUseCase usecase.IProductUsecase
 }
 
-func NewProductController(usecase usecase.ProductUsecase) productController{
+func NewProductController(usecase usecase.IProductUsecase) productController{
 	return productController{
 		productUseCase: usecase,
 	}
@@ -22,7 +22,8 @@ func NewProductController(usecase usecase.ProductUsecase) productController{
 func (p *productController) GetProducts(ctx *gin.Context) {
 	products, err := p.productUseCase.GetProducts()
 	if err != nil{
-		ctx.JSON(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return 
 	}
 	ctx.JSON(http.StatusOK, products)
 }
@@ -32,18 +33,18 @@ func (p *productController) CreateProduct(ctx *gin.Context){
 	err := ctx.BindJSON(&product)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return 
 	}
 	insertProduct, err := p.productUseCase.CreateProduct(product)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusCreated, insertProduct)
 }
 
-func (p *productController) GetProductById(ctx * gin.Context) {
+func (p *productController) GetProductById(ctx *gin.Context) {
 	id := ctx.Param("productId")
 	if id == ""{
 		response := models.Response{
@@ -63,7 +64,7 @@ func (p *productController) GetProductById(ctx * gin.Context) {
 
 	product, err := p.productUseCase.GetProductById(productId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
 	if err == nil && product == nil{

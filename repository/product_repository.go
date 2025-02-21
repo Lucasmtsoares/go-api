@@ -7,17 +7,21 @@ import (
 
 )
 
-type ProductRepository struct {
+type ProductRepository interface {
+	GetProducts() ([]models.Product, error)
+	CreateProduct(product models.Product) (int, error)
+	GetProductById(id int) (*models.Product, error)
+}
+
+type ProductRepositoryImpl struct {
 	connection *sql.DB
 }
 
-func NewProductRepository(connection *sql.DB) ProductRepository{
-	return ProductRepository{
-		connection: connection,
-	}
+func NewProductRepository(connection *sql.DB) ProductRepository {
+	return &ProductRepositoryImpl{connection: connection}
 }
 
-func (pr *ProductRepository) GetProducts() ([]models.Product, error) {
+func (pr *ProductRepositoryImpl) GetProducts() ([]models.Product, error) {
 	query := "SELECT id, product_name, price FROM products"
 	rows, err := pr.connection.Query(query)
 	if err != nil {
@@ -44,7 +48,7 @@ func (pr *ProductRepository) GetProducts() ([]models.Product, error) {
 	return productList, nil
 }
 
-func (pr *ProductRepository) CreateProduct(product models.Product) (int, error){
+func (pr *ProductRepositoryImpl) CreateProduct(product models.Product) (int, error){
 	var id int
 	query, err := pr.connection.Prepare("INSERT INTO products"+
 	"(product_name, price)"+
@@ -65,7 +69,7 @@ func (pr *ProductRepository) CreateProduct(product models.Product) (int, error){
 	return id, nil
 }
 
-func (pr *ProductRepository) GetProductById(id int) (*models.Product, error){
+func (pr *ProductRepositoryImpl) GetProductById(id int) (*models.Product, error){
 	query, err := pr.connection.Prepare("SELECT * FROM products WHERE id = $1")
 	if err != nil {
 		fmt.Println(err)
