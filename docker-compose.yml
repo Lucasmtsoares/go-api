@@ -1,5 +1,9 @@
 version: "2.30.3"
 
+networks:
+  my_network:
+    driver: bridge
+
 services:
   go-app:
     container_name: go-app
@@ -9,6 +13,8 @@ services:
       - "8000:8000"
     depends_on:
       - go_db
+    networks:
+      - my_network
   go_db:
     container_name: go_db
     image: postgres:12
@@ -16,10 +22,16 @@ services:
       POSTGRES_PASSWORD: 12345
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
+    networks:
+      - my_network
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      retries: 5
 
 volumes:
   pgdata: {}
