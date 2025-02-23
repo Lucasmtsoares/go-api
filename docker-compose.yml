@@ -1,50 +1,21 @@
-version: "2.30.3"
-
-networks:
-  my_network:
-    driver: bridge
+version: '3.8'
 
 services:
   go-app:
-    container_name: go-app
-    image: go-api
     build: .
     ports:
-      - "8000:8000"
+      - "8080:8080"
+    env_file:
+      - .env
     depends_on:
       - go_db
-    networks:
-      - my_network
-    environment:
-      DB_HOST: go_db
-      DB_PORT: 5432
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_NAME: ${POSTGRES_DB}
-    secrets:
-      - db_password
 
   go_db:
-    container_name: go_db
     image: postgres:12
+    restart: always
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_DB: ${POSTGRES_DB}
-    networks:
-      - my_network
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      retries: 5
-
-secrets:
-  db_password:
-    file: ./db_password.txt  # Arquivo que conterá a senha do banco
-
-volumes:
-  pgdata: {}
