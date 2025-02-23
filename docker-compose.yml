@@ -15,6 +15,9 @@ services:
       - go_db
     networks:
       - my_network
+    env_file:
+      - .env  
+
   go_db:
     container_name: go_db
     image: postgres:12
