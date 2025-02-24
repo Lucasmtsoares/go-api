@@ -41,10 +41,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+     
 
       - name: Build Docker Image
         run: |
           COMMIT_HASH=$(git rev-parse --short HEAD)
+          echo "Commit Hash: $COMMIT_HASH"  # Debugging the commit hash
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/atividade-devops-api-go:${COMMIT_HASH} .
 
       - name: Push Docker Image to Docker Hub
