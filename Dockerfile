@@ -14,11 +14,10 @@ FROM alpine:latest
 WORKDIR /root/
 
 COPY --from=builder /app/main .
-
-COPY .env.prod .env
+COPY --from=builder /app/.env.prod ./.env
 
 RUN chmod +x ./main
 
 EXPOSE 8000
 
-CMD ["./main"]
+CMD export $(grep -v '^#' .env | xargs) && ./main
