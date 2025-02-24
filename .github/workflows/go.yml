@@ -16,6 +16,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Get Commit Hash
+        run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
@@ -30,8 +33,18 @@ jobs:
       - name: Install Dependencies
         run: go mod download
 
-      - name: Build
+      - name: Build Go App
         run: go build -v ./...
 
       - name: Run Tests
         run: go test -v ./...
+
+      - name: Build Docker Image with Commit Hash
+        run: |
+          echo "Commit Hash: $COMMIT_HASH"
+          docker build --build-arg COMMIT_HASH=$COMMIT_HASH -t go-api:$COMMIT_HASH .
+        env:
+          COMMIT_HASH: ${{ env.COMMIT_HASH }}
+
+      - name: List Docker Images (Debug)
+        run: docker images

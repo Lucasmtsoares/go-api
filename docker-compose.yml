@@ -7,8 +7,11 @@ networks:
 services:
   go-app:
     container_name: go-app
-    image: go-api
-    build: .
+    image: go-api:${COMMIT_HASH}  # Define a tag da imagem com o commit hash
+    build:
+      context: .
+      args:
+        COMMIT_HASH: ${COMMIT_HASH}  # Passa o commit hash para o Dockerfile
     ports:
       - "8000:8000"
     depends_on:
