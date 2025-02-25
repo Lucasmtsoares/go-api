@@ -22,7 +22,7 @@ WORKDIR /app
 RUN apk add --no-cache bash
 
 COPY --from=builder /app/main .
-COPY --from=builder /app/.env ./.env.prod
+COPY --from=builder /app/.env.prod ./.env
 
 RUN chmod +x ./main
 
