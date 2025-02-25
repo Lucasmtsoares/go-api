@@ -3,13 +3,12 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"os"
 
 	_ "github.com/lib/pq"
 )
 
 func ConnectDB() (*sql.DB, error) {
-	dbURL := os.Getenv("DATABASE_URL")
+	dbURL := "postgres://postgres:12345@go_db:5432/postgres?sslmode=disable"
 
 	if dbURL == "" {
 		panic("X ERRO: A variável de ambiente DATABASE_URL não está definida!")
