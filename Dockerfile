@@ -17,7 +17,7 @@ WORKDIR /root/
 RUN apk add --no-cache bash
 
 COPY --from=builder /app/main .
-COPY --from=builder /app/.env.prod ./.env
+COPY --from=builder /app/.env.prod .
 
 RUN chmod +x ./main
 
