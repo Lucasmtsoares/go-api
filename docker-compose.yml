@@ -25,7 +25,7 @@ services:
       - .env.prod
 
   db:
-    container_name: go_db
+    container_name: go_db_test
     image: postgres:12
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
