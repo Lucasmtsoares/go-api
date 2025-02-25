@@ -10,10 +10,12 @@ import (
 func ConnectDB() (*sql.DB, error) {
 	fmt.Println("Iniciando conexão...")
 	dbURL := "postgres://postgres:12345@go_db:5432/postgres?sslmode=disable"
+	fmt.Println("Etapa 1")
 
 	if dbURL == "" {
 		panic("X ERRO: A variável de ambiente DATABASE_URL não está definida!")
 	}
+	fmt.Println("Etapa 2")
 
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
