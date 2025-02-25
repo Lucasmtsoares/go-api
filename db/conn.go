@@ -8,6 +8,7 @@ import (
 )
 
 func ConnectDB() (*sql.DB, error) {
+	fmt.Println("Iniciando conexão...")
 	dbURL := "postgres://postgres:12345@go_db:5432/postgres?sslmode=disable"
 
 	if dbURL == "" {
