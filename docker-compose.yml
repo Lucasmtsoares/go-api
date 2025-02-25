@@ -23,7 +23,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     env_file:
-      - .env.prod
+      - .env
 
   go_db:
     container_name: go_db
