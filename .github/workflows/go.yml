@@ -28,12 +28,24 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Build da Imagem Docker
+      - name: Build da Imagem Docker usando docker-compose.prod.yml
         run: |
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/atividade-devops-api-go:${{ steps.generate_tag.outputs.sha }} .
-          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/atividade-devops-api-go:${{ steps.generate_tag.outputs.sha }} ${{ secrets.DOCKER_HUB_USERNAME }}/atividade-devops-api-go:latest
+          DOCKER_IMAGE=${{ secrets.DOCKER_HUB_USERNAME }}/atividade-devops-api-go
+          TAG=${{ steps.generate_tag.outputs.sha }}
+
+          # Substitui a variável DOCKER_IMAGE_TAG no compose
+          export DOCKER_IMAGE_TAG=$TAG
+
+          # Build usando docker-compose.prod.yml
+          docker-compose -f docker-compose.prod.yml build
+
+          # Adiciona tag 'latest'
+          docker tag $DOCKER_IMAGE:$TAG $DOCKER_IMAGE:latest
 
       - name: Push da Imagem para o Docker Hub
         run: |
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/atividade-devops-api-go:${{ steps.generate_tag.outputs.sha }}
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/atividade-devops-api-go:latest
+          DOCKER_IMAGE=${{ secrets.DOCKER_HUB_USERNAME }}/atividade-devops-api-go
+          TAG=${{ steps.generate_tag.outputs.sha }}
+
+          docker push $DOCKER_IMAGE:$TAG
+          docker push $DOCKER_IMAGE:latest

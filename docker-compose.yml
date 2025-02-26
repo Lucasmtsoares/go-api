@@ -15,22 +15,23 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      go_db:
-        condition: service_healthy  # Aguarda o banco estar pronto
+      - db
     networks:
       - my_network
-    
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     env_file:
-      - .env.prod
+      - .env
 
-  go_db:
+  db:
     container_name: go_db
     image: postgres:12
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB: ${POSTGRES_DB}
-      DATABASE_URL: ${DATABASE_URL}
     networks:
       - my_network
     ports:
@@ -38,7 +39,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       retries: 5
 

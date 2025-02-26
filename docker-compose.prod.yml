@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  go-app:
+    container_name: go-app
+    image: lucassssmmmm1/atividade-devops-api-go:${DOCKER_IMAGE_TAG}
+    build:
+      context: .
+      args:
+        COMMIT_HASH: ${DOCKER_IMAGE_TAG}
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST}  # Adicionando a variável para o host do banco na nuvem
+    env_file:
+      - .env
