@@ -1,9 +1,5 @@
 version: "3.8"
 
-networks:
-  my_network:
-    driver: bridge
-
 services:
   go-app:
     container_name: go-app
@@ -11,37 +7,13 @@ services:
     build:
       context: .
       args:
-        COMMIT_HASH: ${DOCKER_IMAGE_TAG}  # Passa o commit hash para o Dockerfile
+        COMMIT_HASH: ${DOCKER_IMAGE_TAG}
     ports:
       - "8000:8000"
-    depends_on:
-      - db
-    networks:
-      - my_network
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST}  # Adicionando a variável para o host do banco na nuvem
     env_file:
       - .env
-
-  db:
-    container_name: go_db
-    image: postgres:12
-    environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_DB: ${POSTGRES_DB}
-    networks:
-      - my_network
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      retries: 5
-
-volumes:
-  pgdata: {}
